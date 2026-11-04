@@ -1,0 +1,18 @@
+# Python environment: rebuilt from requirements.txt, never committed
+.venv/
+
+# Python bytecode and tool caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Generated outputs (plots, saved arrays, screenshots)
+out/
+*.npy
+*.npz
+
+# Editor and OS clutter
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
