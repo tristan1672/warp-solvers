@@ -2,15 +2,15 @@
 
 The goal of this folder is to implement the four vector differential operators which are recurring operators in physics equations.
 
-## Gradient ∇ (Nabla / Del)
+### Gradient ∇ (Nabla / Del)
 
 ![alt text](images/grad.png)
 
-Vector of first-order partial derivatives in each axis. Gradient takes a scalar/concentration field and produces a vector field, mapping out how the scalars are spatially distributed across the field. It shows you the direction the values are increasing towards.
+Vector of first-order partial derivatives in each axis. Gradient takes a scalar/concentration field and produces a vector field, mapping out how the scalars are spatially increasing across the field. It shows you the direction the values are increasing towards.
 
 Note that the notation shows unit direction vectors, not sum of each derivative, output is a **vector**.
 
-## Divergence
+### Divergence
 
 ![alt text](images/diverg.png)
 
@@ -20,12 +20,40 @@ Not to be confused with the **Venturi** effect where narrowing space increases _
 
 Note that the output is a **scalar**, sum the derivatives of each directional component together.
 
-## Curl
+### Curl
 
 ![alt text](images/curl.png)
 
-## Laplacian Δf or ∇²f
+Vector of first-order partial derivatives
+
+### Laplacian Δf or ∇²f
 
 ![alt text](images/lap.png)
 
 Sum of second-order partial derivatives
+
+<br>
+
+# Approximation of Differentiation
+
+We notice differentiation in each of the operators so how can we "translate" them into operators that we can represent in code?
+
+We need to convert continuous expressions into discrete arithmetic and we can do so using the **Finite-difference** method.
+
+### Finite-difference
+
+The idea is to sample a local derivative using neighboring elements. If you wanted the gradient of a scalar along the X axis, we can take the next element along the X axis and calculate difference against length / step.
+
+### Forward, Backward and Central difference
+
+Then comes the next question which is "which neighboring element do we want to sample against?".
+
+Forward difference takes x (current point) and x + h, where h is the step between each point (assuming a uniform grid). In element access, x + h is the same as [i + 1], where traversing by 1 element is the equivalent of moving spatially by the step h.
+
+Backward differences takes x (current point) and x - h.
+
+Central difference takes x + h and x - h, and you take the difference against 2h now since we are taking the forward neighbor and the backward neighbor as our sample points.
+
+### First-order Derivatives
+
+Applying central difference as our method of choice, differentiating X would just be **ddx = (f[i + 1, j, k] - f[i - 1, j, k]) / 2h**
