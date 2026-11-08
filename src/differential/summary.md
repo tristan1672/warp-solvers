@@ -46,14 +46,20 @@ The idea is to sample a local derivative using neighboring elements. If you want
 
 ### Forward, Backward and Central difference
 
-Then comes the next question which is "which neighboring element do we want to sample against?".
+Then comes the next question: which neighboring element should we sample against?
 
 Forward difference takes x (current point) and x + h, where h is the step between each point (assuming a uniform grid). In element access, x + h is the same as [i + 1], where traversing by 1 element is the equivalent of moving spatially by the step h.
 
 Backward differences takes x (current point) and x - h.
 
-Central difference takes x + h and x - h, and you take the difference against 2h now since we are taking the forward neighbor and the backward neighbor as our sample points.
+Central difference takes x + h (forward neighbor) and x - h (backward neighbor), and you divide the difference against 2h since the spatial length has doubled.
+
+Order of accuracy dictates how quickly approximation error shrinks as you reduce h. Forward and Backward difference is First-Order accurate, while Central difference is Second-Order accurate.
+
+Boundary concerns would be a factor as to which method we would choose. Elements along the edges of the field would not have both forward and backward neighbors but one of either.
 
 ### First-order Derivatives
 
-Applying central difference as our method of choice, differentiating X would just be **ddx = (f[i + 1, j, k] - f[i - 1, j, k]) / 2h**
+Applying central difference, differentiating X would be **ddx = (f[i + 1, j, k] - f[i - 1, j, k]) / 2h**, where i is the element notation for the X axis.
+
+![alt text](images/central_diff.png)
