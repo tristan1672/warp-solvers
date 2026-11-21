@@ -24,13 +24,17 @@ Note that the output is a **scalar**, sum the derivatives of each directional co
 
 ![alt text](images/curl.png)
 
-Vector of first-order partial derivatives
+Vector of first-order partial derivatives. Curl measures the local rotational tendency of a vector, producing a vector containing the net rotation along each axis. The intuition for curl could be thought of as such: if you looked down the X axis and wanted to measure the rotation of the X axis, it would be a measure of the gradient of the Z and Y components, the YZ plane. 
+
+The Z over Y gradient tells us how Z-ward velocity is increasing as the Y position increases, which suggest rotational tendency in the +X direction. The Y over Z gradient tells us how Y-ward velocity is increasing as the Z position increases, which approximates rotational tendency in the other direction -X.
+
+Subtracting both gradients will give you the net rotational component, essentially taking clockwise minus anti clockwise. 
 
 ### Laplacian Δf or ∇²f
 
 ![alt text](images/lap.png)
 
-Sum of second-order partial derivatives
+Sum of second-order partial derivatives. Laplacian is the divergence of the gradient of a field.
 
 <br>
 

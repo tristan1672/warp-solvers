@@ -5,7 +5,7 @@ wp.config.mode = "debug"
 wp.init()
 
 @wp.kernel
-def gradient2D(a: wp.array(dtype=float), b: wp.array(dtype=wp.vec2), inv_2hx: float, inv_2hy: float):
+def gradient2D(a: wp.array(dtype=float), b: wp.array(dtype=wp.vec2), inv_hx: float, inv_hy: float, r: int, c: int):
     
     i, j = wp.tid() # 2D grid
 
@@ -17,11 +17,30 @@ def gradient2D(a: wp.array(dtype=float), b: wp.array(dtype=wp.vec2), inv_2hx: fl
     ddx = (a[i + 1, j] - a[i - 1, j]) / (2 * hx)
     ddy = (a[i, j + 1] - a[i, j -1]) / (2 * hy)
     """
+    
+    # Negligible branch divergence, only edge threads diverge
+    # Warp divergence here is a much better cost than splitting into 3 kernels (forward, backward, central)
+    # Warp divergence refers to when a warp has threads executing different paths, and the warp has to execute sequentially
+    # per branch, so conceptually in this case we if our array is sized 32 or smaller (a warp is 32 threads, larger and we induce more warps),
+    # and the 0 and 31 thread executes forward and backward difference while 1 - 30 executes central difference,
+    # we would have 3 sequential warp executions, 1st run being thread 0 running the forward diff and 1-31 being masked off,
+    # 2nd run being thread 31 (n-1) running the backward diff and the 3rd run executing thread 1-30 for the central diff.
 
-    ddx = (a[i + 1, j] - a[i - 1, j]) * inv_2hx
-    ddy = (a[i, j + 1] - a[i, j - 1]) * inv_2hy
+    # X derivatives
+    if i == 0 : # Forward
+        ddx = (a[i + 1, j] - a[i, j]) * inv_hx
+    elif i == r - 1 : # Backward
+        ddx = (a[i, j] - a[i - 1, j]) * inv_hx
+    else:   # Central
+        ddx = (a[i + 1, j] - a[i - 1, j]) * 0.5 * inv_hx
 
-    # i'll implement boundary branching next, where i or j = 0 requires forward difference..
+    # Y derivatives
+    if j == 0 :
+        ddy = (a[i, j + 1] - a[i, j]) * inv_hy
+    elif j == c - 1 :
+        ddy = (a[i, j] - a[i, j - 1]) * inv_hy
+    else:
+        ddy = (a[i, j + 1] - a[i, j - 1]) * 0.5 * inv_hy
+
 
     b[i , j] = wp.vec2(ddx, ddy)
-
